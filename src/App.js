@@ -1,25 +1,40 @@
-import logo from './logo.svg';
+import { useWeb3React } from '@web3-react/core';
+import { injected } from './lib/connectors';
+
 import './App.css';
 
-function App() {
+const App = () => {
+  const {
+    chainedId,
+    account,
+    active,
+    activate,
+    deactivate
+  } = useWeb3React();
+
+  const handdleConnect = () => {
+    if(active) {
+      deactivate();
+      return;
+    }
+    
+    activate(injected, (error) => {
+      if('/No Ethereum provider was found on window.ethereum/'.test(error)) {
+        window.open('https://metamask.io/download.html');
+      }
+    });
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div>
+        <p>Account: {account}</p>
+        <p>ChainId: {chainedId}</p>
+      </div>
+      <div>
+        <button type="button" onClick={handdleConnect}>{active ? 'disconnect':'connect'}</button>
+      </div>
     </div>
-  );
+  )
 }
 
 export default App;
